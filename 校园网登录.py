@@ -14,7 +14,7 @@ cs={
      'ip':'',
      'n':'200',
      'Type':'1',
-     'username':'账号名',
+     'username':'账号',
      'password':'密码',
      'token':'',
      }
@@ -24,7 +24,7 @@ header={
      'Accept-Encoding':'gzip, deflate',
      'Accept-Language':'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
      'Connection':'keep-alive',
-     'Cookie':'网页登录的Cookie',#不一定是必须
+     'Cookie':'lang=zh-CN',
      'Host':'10.10.10.3',
      'Referer':'http://10.10.10.3/srun_portal_pc?ac_id=1&theme=pro',
      'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.26',
@@ -102,7 +102,7 @@ while error == 'not_online_error' and a1<3:
              html=bs4.BeautifulSoup(html.text,'html.parser')
              print(html)
              cs['token']=re.search('"challenge":"(.*?)"',html.text).group(1)
-             #sign=re.search('"error":"(.*?)"',html.text).group(1)
+             sign=re.search('"error":"(.*?)"',html.text).group(1)
              #第五个请求
 
              #MD5加密
@@ -193,7 +193,6 @@ while error == 'not_online_error' and a1<3:
                      q = q - 1
                  return lencode(pwd, False)
              token=cs['token']
-             print(cs)
              info=gjencodecs(cs)
              f=get_xencode(info,token)
              #base64转码
@@ -209,7 +208,7 @@ while error == 'not_online_error' and a1<3:
                  i=0
                  b10=0
                  x = []
-                 imax = len(s) - len(s) % 3-1;
+                 imax = len(s) - len(s) % 3;
                  if len(s) == 0:
                      return s
                  for i in range(0,imax,3):
@@ -226,7 +225,7 @@ while error == 'not_online_error' and a1<3:
                      b10 = (_getbyte(s, i) << 16) | (_getbyte(s, i + 1) << 8);
                      x.append(_ALPHA[(b10 >> 18)] + _ALPHA[((b10 >> 12) & 63)] + _ALPHA[((b10 >> 6) & 63)] + _PADCHAR);
                  return "".join(x)
-             i='{SRBX1}'+get_base64(f)[0:144]
+             i='{SRBX1}'+get_base64(f)
              cs['i']=i
              #字符连接
              def zflj(cs):
@@ -247,7 +246,7 @@ while error == 'not_online_error' and a1<3:
              data5={
                   'callback':data4['callback'],
                   'action':'login',
-                  'username':header['username'],
+                  'username':cs['username'],
                   'password':parse.quote('{MD5}'+cs['hmd5']),
                   'os':'Windows+10',
                   'name':'Windows',
@@ -266,9 +265,9 @@ while error == 'not_online_error' and a1<3:
              print(html)
              html=bs4.BeautifulSoup(html.text,'html.parser')
              print(html)
-             sign=re.search('"error":"(.*?)"',html.text).group(1)
+             error=re.search('"error":"(.*?)"',html.text).group(1)
 
-     #第八个请求
+     #第六个请求
      param=ur6
 
      html=requests.get(param,header)
